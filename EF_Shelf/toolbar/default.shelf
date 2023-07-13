@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="PS_Shelf" label="PS-Python">
+    <memberTool name="Auto_Spaceship"/>
+  </toolshelf>
+
+  <tool name="Auto_Spaceship" label="Make Spaceship" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[obj = hou.node("/obj")
+geoNode = obj.createNode("geo", "My_Geo")
+
+boxNode = geoNode.createNode("box", "My_Box")
+coneNode = geoNode.createNode("tube", "My_Tube")
+coneNode.parm('type').set(1)
+mergeNode = geoNode.createNode("merge", "Merge")
+mergeNode.setInput(0, boxNode , 0)
+mergeNode.setInput(1, coneNode , 0)
+
+coneNode.parm('cols').set(16)
+coneNode.parm('rad1').set(0)
+coneNode.parm('rad2').set(0.5)
+coneNode.parm('ty').set(1.5)
+
+boxNode.parm('ty').set(0.5)
+
+
+geoNode.layoutChildren()
+mergeNode.setDisplayFlag(True)
+boxNode.setRenderFlag(False)]]></script>
+  </tool>
+
+  <tool name="P-1" label="P_1" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[]]></script>
+  </tool>
+
+  <tool name="hello_world0" label="Hello World" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[print('Hello World')]]></script>
+  </tool>
+
+  <tool name="createBox" label="Create Box" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou
+
+obj = hou.node('/obj')
+my_geo = obj.createNode('geo', "my_geo")
+box = my_geo.createNode('box', "my_box")]]></script>
+  </tool>
+
+  <tool name="intParms" label="Set Ints" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[obj = hou.node("/obj")
+my_geo = obj.createNode("geo")
+my_box = my_geo.createNode('box')
+
+h = 1.5
+w = 2
+d = 3
+
+my_box.parm('sizex').set(h)
+my_box.parm('sizey').set(w)
+my_box.parm('sizez').set(d)
+my_box.parm('ty').set(w/2)  ]]></script>
+  </tool>
+
+  <tool name="stringParms" label="Set Strings" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou
+node = hou.selectedNodes()[0]   
+name = node.name()
+suffix = '_OUT'
+
+node.setName(f'{name}{suffix}')
+
+print(name)]]></script>
+  </tool>
+
+  <tool name="listParms" label="Set Lists" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou
+
+selected = hou.selectedNodes()
+selected = list(selected)
+
+selected[0].setInput(0, selected[1], 0)
+selected[1].setInput(0, selected[2], 0)
+]]></script>
+  </tool>
+
+  <tool name="usingConditions" label="Using Conditions" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[x = 10
+
+string = f'{x} is in the string'
+if '10' in string:
+    print('x\'s value is in string')
+if 'x' in string:
+    print('x as a variable only is in string')
+if '{x}' in string:
+    print('fstring doesnt work')]]></script>
+  </tool>
+
+  <tool name="hello_world1" label="Hello World" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[print('I\'d like to welcome you to my soul society')]]></script>
+  </tool>
+
+  <tool name="open_window" label="Open Window" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou
+import os
+import PySide2 as ps
+
+def getHoudiniMainWindow():
+    # Create main window class as a parent
+    return hou.qt.mainWindow()
+
+# Create a class that imports QT stuff
+class CreateWindow(ps.QtWidgets.QDialog):
+    def __init__(self, parent = getHoudiniMainWindow()):
+        
+        # Call parent init
+        super(CreateWindow, self).__init__(parent)
+    
+        # Window Setup (name, size, not sure what the last one does)    
+        self.setWindowTitle('New Window')
+        self.setMinimumSize(300, 80)
+        self.setWindowFlags(self.windowFlags() ^ ps.QtCore.Qt.WindowContextHelpButtonHint)
+        
+try:
+    CreateWindow.close()
+    CreateWindow.deleteLater()
+except:
+    pass
+CreateWindow = CreateWindow()
+CreateWindow.show()]]></script>
+  </tool>
+
+  <tool name="tool_2" label="New Tool" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou
+from PySide2 import QtCore, QtUiTools, QtWidgets
+
+class GeoCreator(QtWidgets.QWidget):
+    def __init__(self):
+        super(GeoCreator,self).__init__()
+        ui_file = 'C:/Files/HoudiniStuff/FXTDLearning_02/qtfiles/uiGeoCreator.ui'
+        self.ui = QtUiTools.QUiLoader().load(ui_file, parentWidget=self)
+        self.setParent(hou.ui.mainQtWindow(), QtCore.Qt.Window)
+        
+        self.customName = self.ui.lin_name.text()
+        self.ui.btn_create.clicked.connect(self.buttonClicked) # Do not include () because it will call it immediately
+        
+    def buttonClicked(self):
+        print(self.customName)
+
+win = GeoCreator()
+win.show()]]></script>
+  </tool>
+
+  <tool name="tool_3" label="New Tool" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou
+from PySide2 import QtCore, QtUiTools, QtWidgets
+
+def checkExisting(geometryName):
+    # Check if "MY_GEO" exists
+    if hou.node('/obj/{}'.format(geometryName)):
+        # Display fail message
+        hou.ui.displayMessage('{} already exists in the scene'.format(geometryName))
+        return True
+
+
+def createGeoNode(geometryName):
+    # Get scene root node
+    sceneRoot = hou.node('/obj/')
+    # Create empty geometry node in scene root
+    geometry = sceneRoot.createNode('geo', run_init_scripts=False)
+    # Set geometry node name
+    geometry.setName(geometryName)
+    # Display creation message
+    hou.ui.displayMessage('{} node created!'.format(geometryName))
+
+
+class GeoCreator(QtWidgets.QWidget):
+    def __init__(self):
+        super(GeoCreator,self).__init__()
+        ui_file = 'C:/Files/HoudiniStuff/FXTDLearning_02/qtfiles/uiGeoCreator.ui'
+        self.ui = QtUiTools.QUiLoader().load(ui_file, parentWidget=self)
+        self.setParent(hou.ui.mainQtWindow(), QtCore.Qt.Window)
+         
+        # Setup "Create Geometry" button
+        self.ui.btn_create.clicked.connect(self.buttonClicked)
+        
+    def buttonClicked(self):
+        customName = self.ui.lin_name.text()
+        # Execute node creation 
+        if checkExisting(customName) != True:
+            createGeoNode(customName)
+    
+
+win = GeoCreator()
+win.show()]]></script>
+  </tool>
+
+  <tool name="create_magic" label="Make Magic" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou
+from PySide2 import QtCore, QtUiTools, QtWidgets
+
+def checkExisting(geometryName):
+    # Check if "MY_GEO" exists
+    if hou.node('/obj/{}'.format(geometryName)):
+        # Display fail message
+        hou.ui.displayMessage('{} already exists in the scene'.format(geometryName))
+        return True
+
+
+def createGeoNode(geometryName):
+    # Get scene root node
+    sceneRoot = hou.node('/obj/')
+    # Create empty geometry node in scene root
+    geometry = sceneRoot.createNode('geo')
+    # Set geometry node name
+    geometry.setName(geometryName)
+    # Display creation message
+    hou.ui.displayMessage('{} node created!'.format(geometryName))
+
+
+class GeoCreator(QtWidgets.QWidget):
+    def __init__(self):
+        super(GeoCreator,self).__init__()
+        ui_file = 'C:/Files/HoudiniStuff/FXTDLearning_02/qtfiles/create_magic.ui'
+        self.ui = QtUiTools.QUiLoader().load(ui_file, parentWidget=self)
+        self.setParent(hou.ui.mainQtWindow(), QtCore.Qt.Window)
+         
+        # Setup "Create Geometry" button
+        self.ui.button.clicked.connect(self.buttonClicked)
+        
+    def buttonClicked(self):
+        customName = self.ui.title.text() + self.ui.label.text()
+        # Execute node creation 
+        if checkExisting(customName) != True:
+            createGeoNode(customName)
+    
+
+win = GeoCreator()
+win.show()]]></script>
+  </tool>
+
+  <tool name="hello_world2" label="Hello World" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[print('Hello World')]]></script>
+  </tool>
+
+  <tool name="hello_world3" label="Hello World" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[print('Hello World')]]></script>
+  </tool>
+
+  <tool name="tool_5" label="New Tool" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[print('Hello World')]]></script>
+  </tool>
+
+  <tool name="hello_world" label="Hello World" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[print('Hello World')]]></script>
+  </tool>
+
+  <toolshelf name="python_tools" label="Python Tools">
+    <memberTool name="hello_world5"/>
+    <memberTool name="create_sphere"/>
+  </toolshelf>
+
+  <tool name="hello_world5" label="Hello World" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[print('Hello World')]]></script>
+  </tool>
+
+  <tool name="create_sphere" label="Create Sphere" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import hou
+
+obj = hou.node('/obj')
+my_geo = obj.createNode('geo', 'My_Geo')
+my_sphere = my_geo.createNode('sphere', 'My_Sphere')]]></script>
+  </tool>
+
+  <tool name="tool_4" label="New Tool" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[]]></script>
+  </tool>
+</shelfDocument>

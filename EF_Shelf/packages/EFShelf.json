@@ -1,0 +1,8 @@
+{
+	"env": [{
+		"EF_Shelf": "C:/Files/HoudiniStuff/pythonInHoudini/export/EF_Shelf"
+	}],
+
+	"path": "$EF_Shelf",
+	"package_path": "$EF_Shelf/packages"
+}
