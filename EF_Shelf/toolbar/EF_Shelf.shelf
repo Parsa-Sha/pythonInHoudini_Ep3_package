@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="ef_shelf" label="EF Shelf">
+    <memberTool name="exporting_tool"/>
+  </toolshelf>
+
+  <tool name="exporting_tool" label="This Tool Was Exported" icon="$EF_Shelf/toolbar/test_tool_icon.jpg">
+    <script scriptType="python"><![CDATA[print('Hello World (we are moving as a package)')]]></script>
+  </tool>
+</shelfDocument>
